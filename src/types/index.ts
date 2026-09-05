@@ -1,0 +1,94 @@
+export type HazardType = "flood" | "cyclone" | "landslide" | "fire" | "earthquake";
+
+export type Severity = "critical" | "high" | "moderate" | "low";
+
+export interface District {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+}
+
+export interface DisasterEvent {
+  id: string;
+  type: HazardType;
+  district: string;
+  lat: number;
+  lng: number;
+  severity: Severity;
+  riskScore: number;
+  affectedPopulation: number;
+  affectedVillages: number;
+  detectedAt: string;
+  status: "ACTIVE" | "MONITORING" | "RESOLVED";
+  recommendedAction: string;
+}
+
+export interface FloodZone {
+  id: string;
+  district: string;
+  coordinates: [number, number][];
+}
+
+export interface PopulationPoint {
+  id: string;
+  district: string;
+  lat: number;
+  lng: number;
+  density: "high" | "medium" | "low";
+  value: number;
+}
+
+export type FacilityType = "hospital" | "police" | "fire" | "ambulance" | "shelter";
+
+export interface Facility {
+  id: string;
+  type: FacilityType;
+  name: string;
+  district: string;
+  lat: number;
+  lng: number;
+  status: string;
+  statusOk: boolean;
+  metricLabel: string;
+  metricValue: string;
+  distanceKm: number;
+  travelTimeMin: number;
+}
+
+export interface RoadSegment {
+  id: string;
+  name: string;
+  coordinates: [number, number][];
+}
+
+export interface MapLayerState {
+  disasterLocations: boolean;
+  floodZones: boolean;
+  cycloneZones: boolean;
+  landslideZones: boolean;
+  populationDensity: boolean;
+  roads: boolean;
+  hospitals: boolean;
+  police: boolean;
+  fire: boolean;
+  evacuationRoutes: boolean;
+  safeRelocationSites: boolean;
+}
+
+export interface SafeSite {
+  id: string;
+  name: string;
+  district: string;
+  lat: number;
+  lng: number;
+  capacity: number;
+  occupancy: number;
+}
+
+export interface KpiSummary {
+  activeHazards: number;
+  peopleAtRisk: number;
+  redZones: number;
+  safeRelocationSites: number;
+}
