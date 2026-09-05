@@ -145,3 +145,15 @@ export interface CityRiskProfile {
   nearestSafeSiteDistanceKm: number;
   lastUpdated: string;
 }
+
+export type UserRole = "CITIZEN" | "OFFICIAL" | "GUEST";
+
+export interface UserSession {
+  id: string;
+  name: string;
+  role: UserRole;
+  badgeNumber?: string;
+  phone?: string;
+  email?: string;
+  department?: string;
+}

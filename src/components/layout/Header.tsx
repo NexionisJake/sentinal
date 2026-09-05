@@ -8,7 +8,12 @@ function formatTime(date: Date) {
 
 export function Header({ title, subtitle }: { title: string; subtitle: string }) {
   const [now, setNow] = useState(new Date());
-  const { isGovAuthenticated, govUser, setActivePage, openSOSModal } = useAppContext();
+  const {
+    currentUser,
+    logout,
+    openAuthModal,
+    openSOSModal,
+  } = useAppContext();
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 30000);
@@ -20,25 +25,47 @@ export function Header({ title, subtitle }: { title: string; subtitle: string })
       <div className="flex items-center justify-between gap-4 px-4 sm:px-6 py-2 text-[10px] uppercase tracking-wider bg-command-950 border-b border-command-border">
         <div className="flex items-center gap-1.5 text-low">
           <span className="h-1.5 w-1.5 rounded-full bg-low animate-pulse" />
-          Demonstration Mode — TN SDMA
+          TN SDMA Command Operations
         </div>
         <div className="flex items-center gap-3">
-          {isGovAuthenticated ? (
-            <button
-              onClick={() => setActivePage("gov-dashboard")}
-              className="flex items-center gap-1.5 text-emerald-400 font-semibold hover:underline"
-            >
-              <ShieldCheck className="h-3.5 w-3.5" />
-              <span>Officer Active: {govUser?.name?.split(" ")[0] || "Gov"}</span>
-            </button>
+          {currentUser ? (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-300 font-semibold normal-case">
+                {currentUser.name}
+              </span>
+              <span
+                className={`px-1.5 py-0.5 rounded font-mono font-bold ${
+                  currentUser.role === "OFFICIAL"
+                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                    : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
+                }`}
+              >
+                {currentUser.role === "OFFICIAL" ? "Gov Officer" : "Citizen"}
+              </span>
+              <button
+                onClick={logout}
+                className="text-red-400 hover:underline font-semibold ml-1"
+              >
+                Sign Out
+              </button>
+            </div>
           ) : (
-            <button
-              onClick={() => setActivePage("gov-login")}
-              className="flex items-center gap-1 text-cyan-400 font-semibold hover:underline"
-            >
-              <ShieldCheck className="h-3.5 w-3.5" />
-              <span>Government Portal Login</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => openAuthModal("citizen")}
+                className="text-cyan-400 font-semibold hover:underline"
+              >
+                Citizen Sign In
+              </button>
+              <span className="text-gray-600">|</span>
+              <button
+                onClick={() => openAuthModal("official")}
+                className="flex items-center gap-1 text-amber-400 font-semibold hover:underline"
+              >
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span>Gov Portal</span>
+              </button>
+            </div>
           )}
         </div>
       </div>

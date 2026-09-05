@@ -1,7 +1,8 @@
-import { Map, Building2, AlertTriangle, BarChart3, Home, Settings, Radar, ShieldCheck } from "lucide-react";
+import { Map, Building2, AlertTriangle, BarChart3, Home, Settings, Radar, ShieldCheck, UserCheck, LayoutDashboard } from "lucide-react";
 import { useAppContext, type PageKey } from "../../context/AppContext";
 
 const NAV_ITEMS: { key: PageKey; label: string; icon: typeof Map }[] = [
+  { key: "landing", label: "Home Landing", icon: LayoutDashboard },
   { key: "map", label: "Disaster Map", icon: Map },
   { key: "emergency", label: "Emergency Services", icon: Building2 },
   { key: "alerts", label: "Active Alerts", icon: AlertTriangle },
@@ -12,7 +13,7 @@ const NAV_ITEMS: { key: PageKey; label: string; icon: typeof Map }[] = [
 ];
 
 export function Sidebar() {
-  const { activePage, setActivePage, isGovAuthenticated, govUser, logoutGov } = useAppContext();
+  const { activePage, setActivePage, currentUser, logout, openAuthModal } = useAppContext();
 
   return (
     <aside className="hidden md:flex md:w-60 lg:w-64 shrink-0 flex-col bg-command-900 border-r border-command-border">
@@ -51,28 +52,38 @@ export function Sidebar() {
       </nav>
 
       <div className="px-4 py-4 border-t border-command-border space-y-2">
-        {isGovAuthenticated ? (
-          <div className="p-2.5 rounded-lg bg-command-950 border border-emerald-500/30 text-xs">
-            <div className="flex items-center gap-1.5 text-emerald-400 font-bold text-[11px]">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              <span>OFFICER LOGGED IN</span>
+        {currentUser ? (
+          <div className="p-2.5 rounded-lg bg-command-950 border border-command-border text-xs">
+            <div className="flex items-center gap-1.5 font-bold text-[11px]">
+              {currentUser.role === "OFFICIAL" ? (
+                <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
+              ) : (
+                <UserCheck className="h-3.5 w-3.5 text-cyan-400" />
+              )}
+              <span className={currentUser.role === "OFFICIAL" ? "text-amber-300" : "text-cyan-300"}>
+                {currentUser.role === "OFFICIAL" ? "GOV OFFICER" : "CITIZEN"}
+              </span>
             </div>
-            <p className="text-gray-300 font-medium mt-1 truncate">{govUser?.name}</p>
-            <p className="text-[10px] text-gray-500 truncate">{govUser?.department}</p>
+            <p className="text-gray-200 font-medium mt-1 truncate">{currentUser.name}</p>
+            {currentUser.badgeNumber && (
+              <p className="text-[10px] text-amber-400/80 font-mono truncate">{currentUser.badgeNumber}</p>
+            )}
             <button
-              onClick={logoutGov}
+              onClick={logout}
               className="mt-2 w-full py-1 rounded bg-command-800 hover:bg-command-750 text-[10px] text-gray-300 hover:text-white border border-command-border transition-colors"
             >
-              Sign Out Officer
+              Sign Out
             </button>
           </div>
         ) : (
-          <div>
-            <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase tracking-wider">
-              <span className="h-1.5 w-1.5 rounded-full bg-low animate-pulse" />
-              Demonstration Mode
-            </div>
-            <p className="mt-1 text-[10px] text-gray-600 leading-snug">
+          <div className="space-y-2">
+            <button
+              onClick={() => openAuthModal("citizen")}
+              className="w-full py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition-colors"
+            >
+              Sign In / Register
+            </button>
+            <p className="text-[10px] text-gray-600 leading-snug">
               Tamil Nadu State Disaster Management Authority — Prototype
             </p>
           </div>
