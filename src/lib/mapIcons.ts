@@ -2,7 +2,7 @@ import { createElement } from "react";
 import L from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Droplets, Wind, Mountain, Flame, Activity, Cross, Shield, Truck, Home } from "lucide-react";
-import type { HazardType, Severity, FacilityType } from "../types";
+import type { HazardType, Severity, FacilityType, ShelterStatus } from "../types";
 import { severityColor } from "./hazardStyles";
 
 const hazardIconMap: Record<HazardType, typeof Droplets> = {
@@ -75,4 +75,31 @@ export function makeSelectedIcon(): L.DivIcon {
       <div style="position:relative;width:18px;height:18px;border-radius:9999px;background:#ef4444;border:3px solid #0a0e17;box-shadow:0 0 0 3px #ef444488;"></div>
     </div>`;
   return L.divIcon({ html, className: "hazard-marker", iconSize: [36, 36], iconAnchor: [18, 18], popupAnchor: [0, -18] });
+}
+
+const shelterStatusColor: Record<ShelterStatus, string> = {
+  OPEN: "#22c55e",
+  NEAR_CAPACITY: "#eab308",
+  NEAR_FULL: "#eab308",
+  FULL: "#ef4444",
+  INACCESSIBLE: "#a855f7",
+  CLOSED: "#6b7280",
+};
+
+export function makeShelterIcon(status: ShelterStatus): L.DivIcon {
+  const color = shelterStatusColor[status];
+  const svg = renderToStaticMarkup(
+    createElement(Home, {
+      size: 12,
+      color: "#0a0e17",
+      strokeWidth: 2.5,
+    })
+  );
+  const html = `
+    <div style="position:relative;width:28px;height:28px;display:flex;align-items:center;justify-content:center;">
+      <div style="position:relative;width:24px;height:24px;border-radius:8px;background:${color};border:2px solid #0a0e17;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px ${color}55;">
+        ${svg}
+      </div>
+    </div>`;
+  return L.divIcon({ html, className: "hazard-marker", iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] });
 }

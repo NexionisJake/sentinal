@@ -157,3 +157,41 @@ export interface UserSession {
   email?: string;
   department?: string;
 }
+
+export type ShelterType =
+  | "CYCLONE_SHELTER"
+  | "COMMUNITY_HALL"
+  | "RELIEF_CAMP"
+  | "SCHOOL"
+  | "STADIUM";
+
+export type ShelterStatus =
+  | "OPEN"
+  | "NEAR_CAPACITY"
+  | "NEAR_FULL"
+  | "FULL"
+  | "INACCESSIBLE"
+  | "CLOSED";
+
+export type ShelterAmenity =
+  | "FOOD"
+  | "WATER"
+  | "MEDICAL"
+  | "POWER_BACKUP"
+  | "PET_FRIENDLY";
+
+export interface ShelterFacility {
+  id: string;
+  name: string;
+  district?: string;
+  type: ShelterType;
+  coordinates: { lat: number; lng: number };
+  totalCapacity: number;
+  currentOccupancy: number;
+  status: ShelterStatus;
+  amenities: (ShelterAmenity | string)[];
+  contactNumber?: string;
+  contact?: string;
+  distanceKm?: number;
+  estimatedTravelTime?: string;
+}

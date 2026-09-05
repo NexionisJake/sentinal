@@ -7,6 +7,7 @@ import { DisasterMapPage } from "./pages/DisasterMapPage";
 import { EmergencyServicesPage } from "./pages/EmergencyServicesPage";
 import { ActiveAlertsPage } from "./pages/ActiveAlertsPage";
 import { RiskOverviewPage } from "./pages/RiskOverviewPage";
+import { RelocationPage } from "./pages/RelocationPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
 import { GovLoginPage } from "./pages/GovLoginPage";
 import { GovDashboardPage } from "./pages/GovDashboardPage";
@@ -30,7 +31,7 @@ function Router() {
     case "risk":
       return <RiskOverviewPage />;
     case "relocation":
-      return <PlaceholderPage title="🏠 Relocation" />;
+      return <RelocationPage />;
     case "gov-login":
       return <GovLoginPage />;
     case "gov-dashboard":

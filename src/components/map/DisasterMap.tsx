@@ -1,9 +1,11 @@
 import { MapContainer, TileLayer, Marker, Popup, Polygon, Polyline, CircleMarker } from "react-leaflet";
 import type { DisasterEvent, FloodZone, MapLayerState, PopulationPoint, RoadSegment, Facility, RiskZoneLevel } from "../../types";
-import { makeHazardIcon, makeFacilityIcon } from "../../lib/mapIcons";
+import { makeHazardIcon, makeFacilityIcon, makeShelterIcon } from "../../lib/mapIcons";
 import { HazardPopupCard } from "./HazardPopupCard";
 import { MapController } from "./MapController";
 import { CITY_RISK_PROFILES } from "../../data/cityRiskData";
+import { useAppContext } from "../../context/AppContext";
+import { relocationService } from "../../services/relocationService";
 
 const TAMIL_NADU_CENTER: [number, number] = [11.0, 78.6];
 
@@ -51,6 +53,7 @@ export function DisasterMap({
   onSelectDisaster,
   onViewDetails,
 }: Props) {
+  const { selectedRelocationSite, userLocation, setActivePage } = useAppContext();
   return (
     <MapContainer
       center={TAMIL_NADU_CENTER}
@@ -197,6 +200,45 @@ export function DisasterMap({
             </Popup>
           </Marker>
         ))}
+
+      {(layers.safeRelocationSites || selectedRelocationSite) &&
+        relocationService.getAllShelters().map((shelter) => {
+          const isSelected = selectedRelocationSite?.id === shelter.id;
+          return (
+            <Marker
+              key={shelter.id}
+              position={[shelter.coordinates.lat, shelter.coordinates.lng]}
+              icon={makeShelterIcon(shelter.status)}
+              zIndexOffset={isSelected ? 1000 : 0}
+            >
+              <Popup autoPanPadding={[60, 60]} offset={[0, -10]}>
+                <div className="p-3 text-xs bg-command-900 text-slate-100 rounded-md space-y-1.5 min-w-[200px]">
+                  <p className="font-bold text-white text-sm">{shelter.name}</p>
+                  <p className="text-slate-400">{shelter.district} · {shelter.type}</p>
+                  <p className="text-[10px] font-mono text-emerald-400">
+                    Spots Available: {shelter.totalCapacity - shelter.currentOccupancy} / {shelter.totalCapacity}
+                  </p>
+                  <button
+                    onClick={() => setActivePage("relocation")}
+                    className="w-full mt-2 py-1.5 rounded bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 font-bold text-[10px] cursor-pointer"
+                  >
+                    Open Relocation Finder
+                  </button>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
+
+      {userLocation && selectedRelocationSite && (
+        <Polyline
+          positions={[
+            [userLocation.lat, userLocation.lng],
+            [selectedRelocationSite.coordinates.lat, selectedRelocationSite.coordinates.lng],
+          ]}
+          pathOptions={{ color: "#06b6d4", weight: 3.5, dashArray: "6 6", opacity: 0.9 }}
+        />
+      )}
     </MapContainer>
   );
 }

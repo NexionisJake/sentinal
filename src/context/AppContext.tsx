@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { DisasterEvent, GovUser, SOSAlert, SOSStatus, UserSession } from "../types";
+import type { DisasterEvent, GovUser, ShelterFacility, SOSAlert, SOSStatus, UserSession } from "../types";
 import { createSOSAlert, getSOSAlerts, updateSOSAlertStatus } from "../services/sosService";
 
 export type PageKey =
@@ -23,6 +23,13 @@ interface AppContextValue {
   clearFocusRequest: () => void;
   routeTarget: { facilityId: string } | null;
   requestRoute: (facilityId: string | null) => void;
+
+  // Safe Relocation State
+  selectedRelocationSite: ShelterFacility | null;
+  setSelectedRelocationSite: (site: ShelterFacility | null) => void;
+  userLocation: { lat: number; lng: number } | null;
+  setUserLocation: (loc: { lat: number; lng: number } | null) => void;
+  acquireUserLocation: () => void;
 
   // SOS Alert State
   sosAlerts: SOSAlert[];
@@ -85,6 +92,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [selectedDisaster, setSelectedDisaster] = useState<DisasterEvent | null>(null);
   const [focusRequest, setFocusRequest] = useState<{ lat: number; lng: number; zoom?: number } | null>(null);
   const [routeTarget, setRouteTarget] = useState<{ facilityId: string } | null>(null);
+
+  // Safe Relocation State
+  const [selectedRelocationSite, setSelectedRelocationSite] = useState<ShelterFacility | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>({
+    lat: 13.0827,
+    lng: 80.2707,
+  });
+
+  const acquireUserLocation = () => {
+    if (typeof window !== "undefined" && "geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        },
+        (err) => {
+          console.warn("Geolocation fallback active:", err.message);
+        },
+        { timeout: 8000, enableHighAccuracy: true }
+      );
+    }
+  };
+
+  useEffect(() => {
+    acquireUserLocation();
+  }, []);
 
   // SOS state
   const [sosAlerts, setSosAlerts] = useState<SOSAlert[]>([]);
@@ -250,6 +282,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       latestIncomingAlert,
       clearLatestIncomingAlert: () => setLatestIncomingAlert(null),
 
+      selectedRelocationSite,
+      setSelectedRelocationSite,
+      userLocation,
+      setUserLocation,
+      acquireUserLocation,
+
       currentUser,
       loginCitizen: loginCitizenHandler,
       loginOfficial: loginOfficialHandler,
@@ -276,6 +314,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       routeTarget,
       sosAlerts,
       latestIncomingAlert,
+      selectedRelocationSite,
+      userLocation,
       currentUser,
       govUser,
       isSOSModalOpen,

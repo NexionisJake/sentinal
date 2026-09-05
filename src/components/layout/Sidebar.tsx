@@ -7,7 +7,7 @@ const NAV_ITEMS: { key: PageKey; label: string; icon: typeof Map }[] = [
   { key: "emergency", label: "Emergency Services", icon: Building2 },
   { key: "alerts", label: "Active Alerts", icon: AlertTriangle },
   { key: "risk", label: "Risk Overview", icon: BarChart3 },
-  { key: "relocation", label: "Relocation", icon: Home },
+  { key: "relocation", label: "Safe Relocation", icon: Home },
   { key: "gov-dashboard", label: "Gov Portal (EOC)", icon: ShieldCheck },
   { key: "settings", label: "Settings", icon: Settings },
 ];

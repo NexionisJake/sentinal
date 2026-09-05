@@ -1,7 +1,10 @@
 import type { DisasterEvent } from "../../types";
 import { hazardLabel, severityBadgeClasses, severityLabel } from "../../lib/hazardStyles";
+import { useAppContext } from "../../context/AppContext";
 
 export function HazardPopupCard({ disaster, onViewDetails }: { disaster: DisasterEvent; onViewDetails: () => void }) {
+  const { setUserLocation, setActivePage } = useAppContext();
+
   return (
     <div className="p-3.5 w-full bg-command-900 text-slate-100 rounded-lg">
       <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
@@ -39,12 +42,23 @@ export function HazardPopupCard({ disaster, onViewDetails }: { disaster: Disaste
         <p className="text-xs text-slate-200 mt-1 leading-snug">{disaster.recommendedAction}</p>
       </div>
 
-      <button
-        onClick={onViewDetails}
-        className="mt-3.5 w-full rounded-md bg-cyan-500/20 border border-cyan-500/50 text-cyan-300 text-xs font-bold py-2 hover:bg-cyan-500/30 transition-colors cursor-pointer"
-      >
-        VIEW DETAILS
-      </button>
+      <div className="mt-3.5 flex gap-2">
+        <button
+          onClick={onViewDetails}
+          className="flex-1 rounded-md bg-cyan-500/20 border border-cyan-500/50 text-cyan-300 text-xs font-bold py-2 hover:bg-cyan-500/30 transition-colors cursor-pointer"
+        >
+          VIEW DETAILS
+        </button>
+        <button
+          onClick={() => {
+            setUserLocation({ lat: disaster.lat, lng: disaster.lng });
+            setActivePage("relocation");
+          }}
+          className="flex-1 rounded-md bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-xs font-bold py-2 hover:bg-emerald-500/30 transition-colors cursor-pointer"
+        >
+          FIND SHELTER
+        </button>
+      </div>
     </div>
   );
 }

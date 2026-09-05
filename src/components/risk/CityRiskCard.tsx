@@ -1,5 +1,6 @@
 import { MapPin, ShieldAlert, AlertCircle, Home, Navigation } from "lucide-react";
 import type { CityRiskProfile, RiskZoneLevel } from "../../types";
+import { useAppContext } from "../../context/AppContext";
 
 const ZONE_CONFIG: Record<
   RiskZoneLevel,
@@ -42,6 +43,7 @@ interface Props {
 }
 
 export function CityRiskCard({ city, onLocateOnMap }: Props) {
+  const { setUserLocation, setActivePage } = useAppContext();
   const config = ZONE_CONFIG[city.zone];
 
   return (
@@ -106,14 +108,26 @@ export function CityRiskCard({ city, onLocateOnMap }: Props) {
         </div>
       </div>
 
-      {/* Action Button */}
-      <button
-        onClick={() => onLocateOnMap(city)}
-        className="mt-4 w-full py-2 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-      >
-        <Navigation className="h-3.5 w-3.5" />
-        <span>LOCATE ON MAP</span>
-      </button>
+      {/* Action Buttons */}
+      <div className="mt-4 flex gap-2">
+        <button
+          onClick={() => onLocateOnMap(city)}
+          className="flex-1 py-2 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+        >
+          <Navigation className="h-3.5 w-3.5" />
+          <span>LOCATE ON MAP</span>
+        </button>
+        <button
+          onClick={() => {
+            setUserLocation(city.coordinates);
+            setActivePage("relocation");
+          }}
+          className="flex-1 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 text-emerald-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+        >
+          <Home className="h-3.5 w-3.5" />
+          <span>FIND SHELTER</span>
+        </button>
+      </div>
     </div>
   );
 }

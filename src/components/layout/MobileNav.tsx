@@ -1,9 +1,10 @@
-import { Map, Building2, AlertTriangle, ShieldCheck, LayoutDashboard } from "lucide-react";
+import { Map, Building2, AlertTriangle, ShieldCheck, LayoutDashboard, Home } from "lucide-react";
 import { useAppContext, type PageKey } from "../../context/AppContext";
 
 const ITEMS: { key: PageKey; label: string; icon: typeof Map }[] = [
   { key: "landing", label: "Home", icon: LayoutDashboard },
   { key: "map", label: "Map", icon: Map },
+  { key: "relocation", label: "Shelters", icon: Home },
   { key: "emergency", label: "Services", icon: Building2 },
   { key: "alerts", label: "Alerts", icon: AlertTriangle },
   { key: "gov-dashboard", label: "Gov EOC", icon: ShieldCheck },
