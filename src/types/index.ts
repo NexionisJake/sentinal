@@ -74,6 +74,7 @@ export interface MapLayerState {
   fire: boolean;
   evacuationRoutes: boolean;
   safeRelocationSites: boolean;
+  cityRiskZones?: boolean;
 }
 
 export interface SafeSite {
@@ -125,4 +126,22 @@ export interface GovUser {
   email: string;
   role: string;
   department: string;
+}
+
+export type RiskZoneLevel = "RED" | "ORANGE" | "YELLOW" | "GREEN";
+
+export interface CityRiskProfile {
+  id: string;
+  name: string;
+  state: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  zone: RiskZoneLevel;
+  riskScore: number;
+  primaryThreat: string;
+  activeAlertCount: number;
+  nearestSafeSiteDistanceKm: number;
+  lastUpdated: string;
 }

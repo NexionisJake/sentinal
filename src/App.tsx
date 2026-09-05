@@ -5,6 +5,7 @@ import { MobileNav } from "./components/layout/MobileNav";
 import { DisasterMapPage } from "./pages/DisasterMapPage";
 import { EmergencyServicesPage } from "./pages/EmergencyServicesPage";
 import { ActiveAlertsPage } from "./pages/ActiveAlertsPage";
+import { RiskOverviewPage } from "./pages/RiskOverviewPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
 import { GovLoginPage } from "./pages/GovLoginPage";
 import { GovDashboardPage } from "./pages/GovDashboardPage";
@@ -23,7 +24,7 @@ function Router() {
     case "alerts":
       return <ActiveAlertsPage />;
     case "risk":
-      return <PlaceholderPage title="📊 Risk Overview" />;
+      return <RiskOverviewPage />;
     case "relocation":
       return <PlaceholderPage title="🏠 Relocation" />;
     case "gov-login":

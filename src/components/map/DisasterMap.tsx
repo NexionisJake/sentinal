@@ -1,13 +1,28 @@
 import { MapContainer, TileLayer, Marker, Popup, Polygon, Polyline, CircleMarker } from "react-leaflet";
-import type { DisasterEvent, FloodZone, MapLayerState, PopulationPoint, RoadSegment, Facility } from "../../types";
+import type { DisasterEvent, FloodZone, MapLayerState, PopulationPoint, RoadSegment, Facility, RiskZoneLevel } from "../../types";
 import { makeHazardIcon, makeFacilityIcon } from "../../lib/mapIcons";
 import { HazardPopupCard } from "./HazardPopupCard";
 import { MapController } from "./MapController";
+import { CITY_RISK_PROFILES } from "../../data/cityRiskData";
 
 const TAMIL_NADU_CENTER: [number, number] = [11.0, 78.6];
 
 const densityRadius: Record<PopulationPoint["density"], number> = { high: 22, medium: 14, low: 8 };
 const densityColor: Record<PopulationPoint["density"], string> = { high: "#ef4444", medium: "#f97316", low: "#38bdf8" };
+
+const ZONE_COLOR: Record<RiskZoneLevel, string> = {
+  RED: "#ef4444",
+  ORANGE: "#f97316",
+  YELLOW: "#eab308",
+  GREEN: "#22c55e",
+};
+
+const ZONE_RADIUS: Record<RiskZoneLevel, number> = {
+  RED: 20,
+  ORANGE: 16,
+  YELLOW: 13,
+  GREEN: 10,
+};
 
 interface Props {
   disasters: DisasterEvent[];
@@ -65,6 +80,50 @@ export function DisasterMap({
       {layers.roads &&
         roads.map((r) => (
           <Polyline key={r.id} positions={r.coordinates} pathOptions={{ color: "#4b5563", weight: 2, dashArray: "4 4" }} />
+        ))}
+
+      {layers.cityRiskZones !== false &&
+        CITY_RISK_PROFILES.map((city) => (
+          <CircleMarker
+            key={city.id}
+            center={[city.coordinates.lat, city.coordinates.lng]}
+            radius={ZONE_RADIUS[city.zone]}
+            pathOptions={{
+              color: ZONE_COLOR[city.zone],
+              fillColor: ZONE_COLOR[city.zone],
+              fillOpacity: 0.25,
+              weight: 2,
+              opacity: 0.8,
+            }}
+          >
+            <Popup autoPanPadding={[60, 60]} offset={[0, -10]}>
+              <div className="p-3 text-xs bg-command-900 text-slate-100 rounded-md space-y-1.5 min-w-[200px]">
+                <div className="flex items-center justify-between gap-2 border-b border-command-border/60 pb-1.5">
+                  <p className="font-bold text-white text-sm">{city.name}</p>
+                  <span
+                    className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
+                      city.zone === "RED"
+                        ? "bg-red-500/20 text-red-300 border border-red-500/40"
+                        : city.zone === "ORANGE"
+                        ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                        : city.zone === "YELLOW"
+                        ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/40"
+                        : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                    }`}
+                  >
+                    {city.zone} ZONE
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-300">
+                  Threat: <strong className="text-amber-400">{city.primaryThreat}</strong>
+                </p>
+                <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-1">
+                  <span>Risk Score: <strong className="text-white">{city.riskScore}/100</strong></span>
+                  <span>Alerts: <strong className="text-red-400">{city.activeAlertCount}</strong></span>
+                </div>
+              </div>
+            </Popup>
+          </CircleMarker>
         ))}
 
       {layers.populationDensity &&

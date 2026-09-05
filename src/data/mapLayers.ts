@@ -2,6 +2,7 @@ import type { MapLayerState } from "../types";
 
 export const defaultLayerState: MapLayerState = {
   disasterLocations: true,
+  cityRiskZones: true,
   floodZones: true,
   cycloneZones: true,
   landslideZones: true,
@@ -16,6 +17,7 @@ export const defaultLayerState: MapLayerState = {
 
 export const layerLabels: { key: keyof MapLayerState; label: string }[] = [
   { key: "disasterLocations", label: "Disaster Locations" },
+  { key: "cityRiskZones", label: "City Risk Zones (Red/Orange/Yellow/Green)" },
   { key: "floodZones", label: "Flood Zones" },
   { key: "cycloneZones", label: "Cyclone Zones" },
   { key: "landslideZones", label: "Landslide Zones" },
