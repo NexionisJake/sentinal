@@ -92,3 +92,37 @@ export interface KpiSummary {
   redZones: number;
   safeRelocationSites: number;
 }
+
+export type SOSMessageType =
+  | "MEDICAL_EMERGENCY"
+  | "TRAPPED_FLOOD"
+  | "FIRE_HAZARD"
+  | "STRUCTURAL_COLLAPSE"
+  | "CUSTOM";
+
+export type SOSStatus = "PENDING" | "ACKNOWLEDGED" | "DISPATCHED" | "RESOLVED";
+
+export type SOSPriority = "CRITICAL" | "HIGH" | "MEDIUM";
+
+export interface SOSAlert {
+  id: string;
+  timestamp: string;
+  senderName?: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  messageType: SOSMessageType;
+  messageText: string;
+  status: SOSStatus;
+  priority: SOSPriority;
+  district?: string;
+}
+
+export interface GovUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  department: string;
+}

@@ -6,6 +6,11 @@ import { DisasterMapPage } from "./pages/DisasterMapPage";
 import { EmergencyServicesPage } from "./pages/EmergencyServicesPage";
 import { ActiveAlertsPage } from "./pages/ActiveAlertsPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
+import { GovLoginPage } from "./pages/GovLoginPage";
+import { GovDashboardPage } from "./pages/GovDashboardPage";
+import { GovProtectedRoute } from "./components/auth/GovProtectedRoute";
+import { SOSButton } from "./components/sos/SOSButton";
+import { SOSModal } from "./components/sos/SOSModal";
 
 function Router() {
   const { activePage } = useAppContext();
@@ -21,6 +26,14 @@ function Router() {
       return <PlaceholderPage title="📊 Risk Overview" />;
     case "relocation":
       return <PlaceholderPage title="🏠 Relocation" />;
+    case "gov-login":
+      return <GovLoginPage />;
+    case "gov-dashboard":
+      return (
+        <GovProtectedRoute>
+          <GovDashboardPage />
+        </GovProtectedRoute>
+      );
     case "settings":
       return <PlaceholderPage title="⚙️ Settings" />;
     default:
@@ -36,6 +49,8 @@ function Shell() {
         <Router />
       </main>
       <MobileNav />
+      <SOSButton />
+      <SOSModal />
     </div>
   );
 }
